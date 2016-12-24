@@ -1,0 +1,66 @@
+import processing.video.*;
+Particle[] particles;
+Movie[] movie;
+
+int t = 0;
+int cualMovie = 0;
+
+boolean clearBg, xtraVel, xtraSize; 
+
+void setup() {
+   fullScreen();
+  //size (1280, 720);
+  particles = new Particle [2500];
+  for (int i = 0; i < particles.length; i++) {
+    particles[i] = new Particle();
+  }
+
+  movie = new Movie[9];
+  for (int i=0; i<movie.length; i++) {
+    movie[i] = new Movie (this, "movie"+(i+1)+".mp4");
+    movie[i].loop();
+    if(i>0)movie[i].pause();
+  }
+  //
+  //
+  //movie[cualMovie].loop();
+}
+
+void movieEvent(Movie m) {
+  m.read();
+}
+
+void draw() {
+  if (clearBg)background(0);
+
+  for (Particle p : particles) {
+    p.p = xtraVel?   50: 2;
+    p.q = xtraSize? 100: 3;
+    int mx, my;
+    mx = int(map(p.x, 0, width, 0, movie[cualMovie].width));
+    my = int(map(p.y, 0, height, 0, movie[cualMovie].height));
+    p.c = movie[cualMovie].get(mx, my);
+    p.display();
+    p.move();
+  }
+}
+
+
+void keyPressed() {
+  if (key == '-') {
+    clearBg = !clearBg;
+  }
+  if (key == '.') {
+    xtraVel = !xtraVel;
+  } 
+  if (key == ',') {
+    xtraSize = !xtraSize;
+  } 
+  if (key=='1'  || key=='2' || key=='3' || key=='4' || key=='5' || key=='6' || key=='7' || key=='8' || key=='9') {
+    int kk = key-49;
+    //println(kk);
+    if (cualMovie!=kk)movie[cualMovie].pause();
+    cualMovie = kk;
+    movie[cualMovie].loop();
+  }
+}
